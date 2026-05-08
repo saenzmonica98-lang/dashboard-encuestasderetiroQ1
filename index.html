@@ -1,0 +1,501 @@
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   VIAJERO HOSTELS · DASHBOARD PEOPLE ANALYTICS Q1 2026
+   Paleta de marca: naranjas (foco) + grises (base)
+   Tipografía ampliada para lectura en presentación de comité
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  /* Marca */
+  --or:#F04B24;            /* naranja principal */
+  --or-2:#F7825F;          /* naranja medio */
+  --or-3:#FAB59A;          /* naranja claro */
+  --or-soft:#FFF2EF;       /* fondo naranja muy claro */
+  --or-band:rgba(240,75,36,0.18);
+  /* Grises de marca */
+  --gr-1:#3D3D3B;          /* charcoal */
+  --gr-2:#585856;          /* gris primario */
+  --gr-3:#8A8A87;          /* gris medio */
+  --gr-4:#B4B2A9;          /* gris claro */
+  --gr-5:#D3D1C7;          /* gris muy claro */
+  /* Acento cálido on-brand */
+  --mustard:#FAC775;       /* mostaza (complemento cálido) */
+  /* Semánticos (usados solo donde el color comunica significado) */
+  --pos:#639922; --pos-bg:#DCEFD0; --pos-tx:#2D6611;
+  --warn:#E0A032; --warn-bg:#FDF1D6; --warn-tx:#7A4A00;
+  --neg:#D63B3A; --neg-bg:#FDDCDB; --neg-tx:#8C1F1E;
+  /* Familia tipográfica de marca (Geomanist con fallbacks geométricos) */
+  --ff:'Geomanist','Geomanist Regular','Manrope','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--ff);}
+
+/* ── Header con logo de marca a la izquierda ── */
+.hdr{display:flex;align-items:center;gap:18px;padding:6px 0 18px;border-bottom:1px solid var(--color-border-tertiary);margin-bottom:22px;}
+.hdr-brand{flex-shrink:0;display:flex;align-items:center;}
+.hdr-brand img{height:54px;width:auto;display:block;}
+.hdr-text{flex:1;min-width:0;}
+.hdr-title{font-size:21px;font-weight:700;color:var(--color-text-primary);line-height:1.25;letter-spacing:-0.01em;}
+.hdr-sub{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-top:3px;}
+@media(max-width:520px){
+  .hdr-brand img{height:40px;}
+  .hdr-title{font-size:18px;}
+  .hdr-sub{font-size:13px;}
+  .hdr{gap:12px;}
+}
+
+/* ── Navegación por segmentos ── */
+.seg-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.snav{font-size:14px;padding:8px 18px;border-radius:22px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s;font-weight:500;}
+.snav.on{background:var(--or);color:#fff;border-color:var(--or);box-shadow:0 1px 3px rgba(240,75,36,0.25);font-weight:600;}
+.snav:hover:not(.on){background:var(--color-background-secondary);color:var(--color-text-primary);}
+.seg{display:none;}.seg.on{display:block;}
+.seg-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--or);margin-bottom:16px;}
+
+/* ── KPI cards (fila superior) ── */
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.kc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:15px 17px;border:0.5px solid transparent;transition:border-color .15s;}
+.kc:hover{border-color:var(--or-band);}
+.kl{font-size:13px;color:var(--color-text-secondary);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em;line-height:1.35;font-weight:600;}
+.kv{font-size:32px;font-weight:700;color:var(--color-text-primary);line-height:1.1;letter-spacing:-0.01em;}
+.kv.hi{color:var(--or);}
+.ks{font-size:13px;color:var(--color-text-tertiary);margin-top:5px;line-height:1.3;font-weight:500;}
+
+/* ── Layout de cajas ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+.box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px 20px;}
+.full-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px 20px;margin-bottom:14px;}
+.bt{font-size:16px;font-weight:700;color:var(--color-text-primary);margin-bottom:14px;line-height:1.3;letter-spacing:-0.005em;}
+
+/* ── Barras horizontales ── */
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.bl{font-size:14px;color:var(--color-text-secondary);min-width:140px;flex-shrink:0;line-height:1.35;font-weight:500;}
+.bl.sede{font-weight:700;color:var(--color-text-primary);}
+.bt2{flex:1;height:10px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;}
+.bf{height:100%;border-radius:4px;transition:width .3s;}
+.bv{font-size:14px;font-weight:700;color:var(--color-text-primary);min-width:42px;text-align:right;}
+
+/* ── Insights ── */
+.ins{border-left:4px solid var(--or);background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:14px 18px;margin-bottom:13px;}
+.ins-tag{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--or);font-weight:700;margin-bottom:6px;}
+.ins-txt{font-size:15px;color:var(--color-text-primary);line-height:1.55;}
+.ins-imp{font-size:14px;color:var(--color-text-secondary);margin-top:7px;line-height:1.5;}
+
+/* ── Recomendaciones ── */
+.rec-item{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.rbadge{min-width:70px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:20px;text-align:center;line-height:1.4;letter-spacing:.02em;}
+.ru{background:var(--neg-bg);color:var(--neg-tx);}
+.rm{background:var(--warn-bg);color:var(--warn-tx);}
+.rl{background:var(--pos-bg);color:var(--pos-tx);}
+.rt{font-size:15px;color:var(--color-text-primary);line-height:1.55;}
+
+/* ── Alertas ── */
+.alert{background:var(--neg-bg);border:0.5px solid #F7C1C1;border-radius:var(--border-radius-md);padding:14px 18px;margin-bottom:13px;}
+.alert-t{font-size:15px;font-weight:700;color:var(--neg-tx);margin-bottom:6px;}
+.alert-b{font-size:14px;color:#791F1F;line-height:1.55;}
+
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:14px 0;}
+
+/* ── CTA ── */
+.cta{width:100%;margin-top:18px;padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;border-radius:var(--border-radius-md);border:0.5px solid var(--or);background:var(--or-soft);color:var(--or);transition:all .15s;}
+.cta:hover{background:var(--or);color:#fff;}
+
+/* ── Tarjetas de experiencia del colaborador ── */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+@media(max-width:540px){.exp-grid{grid-template-columns:1fr;}}
+.exp-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:15px 17px;position:relative;}
+.exp-dimension{font-size:14px;font-weight:700;color:var(--color-text-primary);margin-bottom:12px;line-height:1.3;}
+.exp-pill-row{display:flex;gap:7px;margin-bottom:7px;}
+.exp-pill{display:flex;align-items:center;justify-content:space-between;border-radius:20px;padding:6px 12px;flex:1;}
+.exp-pill-label{font-size:13px;font-weight:600;}
+.exp-pill-num{font-size:17px;font-weight:700;}
+.pill-green{background:var(--pos-bg);color:var(--pos-tx);}
+.pill-yellow{background:var(--warn-bg);color:var(--warn-tx);}
+.pill-red{background:var(--neg-bg);color:var(--neg-tx);}
+.pill-gray{background:var(--color-background-primary);color:var(--color-text-tertiary);}
+.exp-bar-mini{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px;margin-top:8px;}
+.exp-verdict{font-size:13px;font-weight:700;margin-top:6px;padding:4px 11px;border-radius:12px;display:inline-block;letter-spacing:.02em;}
+.verdict-ok{background:var(--pos-bg);color:var(--pos-tx);}
+.verdict-warn{background:var(--warn-bg);color:var(--warn-tx);}
+.verdict-crit{background:var(--neg-bg);color:var(--neg-tx);}
+
+/* ── Tabla sedes BI ── */
+.sede-tbl{width:100%;border-collapse:collapse;font-size:14px;}
+.sede-tbl th{text-align:left;color:var(--color-text-secondary);padding:0 8px 10px 0;font-weight:700;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;text-transform:uppercase;letter-spacing:.05em;}
+.sede-tbl td{padding:9px 8px 9px 0;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle;}
+.sede-tbl tbody td:first-child{font-weight:700;}
+.sede-tbl tr:hover td{background:var(--color-background-secondary);}
+.tbl-bar-wrap{width:100px;height:8px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;}
+.tbl-bar-fill{height:100%;border-radius:3px;background:var(--or);}
+.badge-hi{background:var(--neg-bg);color:var(--neg-tx);font-size:12px;padding:3px 9px;border-radius:10px;font-weight:700;}
+.badge-md{background:var(--warn-bg);color:var(--warn-tx);font-size:12px;padding:3px 9px;border-radius:10px;font-weight:700;}
+.badge-ok{background:var(--pos-bg);color:var(--pos-tx);font-size:12px;padding:3px 9px;border-radius:10px;font-weight:700;}
+
+/* ── Notas auxiliares ── */
+.note{font-size:13px;color:var(--color-text-tertiary);line-height:1.4;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;padding:12px 15px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);}
+</style>
+
+<div class="hdr">
+  <div class="hdr-brand">
+    <img src="data:image/jpeg;base64,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" alt="Viajero Hostels" />
+  </div>
+  <div class="hdr-text">
+    <div class="hdr-title">Dashboard People Analytics · Q1 2026</div>
+    <div class="hdr-sub">Viajero Hostels · Enero–Abril 2026</div>
+  </div>
+</div>
+
+<div class="seg-nav">
+  <button class="snav on" onclick="go('s1',this)">1 · Entrevistas de retiro</button>
+  <button class="snav" onclick="go('s2',this)">2 · Insights</button>
+  <button class="snav" onclick="go('s3',this)">3 · Rotación general</button>
+  <button class="snav" onclick="go('s4',this)">4 · Recomendaciones</button>
+</div>
+
+<!-- ══════════════════ SEGMENTO 1 ══════════════════ -->
+<div id="s1" class="seg on">
+  <div class="seg-label">Segmento 1 · Análisis de entrevistas de retiro — solo renuncias voluntarias (31)</div>
+
+  <div class="krow">
+    <div class="kc"><div class="kl">Renuncias voluntarias</div><div class="kv hi">31</div><div class="ks">de 43 salidas totales (72%)</div></div>
+    <div class="kc"><div class="kl">Permanencia media</div><div class="kv">367</div><div class="ks">días (~12 meses)</div></div>
+    <div class="kc"><div class="kl">Early leavers &lt;90d</div><div class="kv hi">35%</div><div class="ks">11 personas</div></div>
+    <div class="kc"><div class="kl">Recomendarían Viajero</div><div class="kv">87%</div><div class="ks">27 de 31</div></div>
+    <div class="kc"><div class="kl">Exp. Buena/Excelente</div><div class="kv">87%</div><div class="ks">27 de 31</div></div>
+    <div class="kc"><div class="kl">Nunca apoyado por jefe</div><div class="kv hi">13%</div><div class="ks">4 de 31</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <div class="bt">Motivos de salida marcados</div>
+      <div class="bar"><span class="bl">Liderazgo</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">8</span></div>
+      <div class="bar"><span class="bl">Oferta externa mejor</span><div class="bt2"><div class="bf" style="width:87%;background:#585856"></div></div><span class="bv">7</span></div>
+      <div class="bar"><span class="bl">Compensación</span><div class="bt2"><div class="bf" style="width:75%;background:#F04B24aa"></div></div><span class="bv">6</span></div>
+      <div class="bar"><span class="bl">Ambiente/compañeros</span><div class="bt2"><div class="bf" style="width:62%;background:#FAC775"></div></div><span class="bv">5</span></div>
+      <div class="bar"><span class="bl">Horarios/carga</span><div class="bt2"><div class="bf" style="width:50%;background:#B4B2A9"></div></div><span class="bv">4</span></div>
+      <div class="bar"><span class="bl">Motivos personales</span><div class="bt2"><div class="bf" style="width:37%;background:#B4B2A9"></div></div><span class="bv">3</span></div>
+      <div class="bar"><span class="bl">Condiciones físicas</span><div class="bt2"><div class="bf" style="width:12%;background:#D3D1C7"></div></div><span class="bv">1</span></div>
+    </div>
+    <div class="box">
+      <div class="bt">¿Qué cambio los habría retenido? (Q11)</div>
+      <div class="bar"><span class="bl">Mejor trato/liderazgo</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">11</span></div>
+      <div class="bar"><span class="bl">Mejor salario</span><div class="bt2"><div class="bf" style="width:82%;background:#585856"></div></div><span class="bv">9</span></div>
+      <div class="bar"><span class="bl">Mejor horario</span><div class="bt2"><div class="bf" style="width:73%;background:#FAC775"></div></div><span class="bv">8</span></div>
+      <div class="bar"><span class="bl">Más capacitación</span><div class="bt2"><div class="bf" style="width:73%;background:#F7825F"></div></div><span class="bv">8</span></div>
+      <div class="bar"><span class="bl">Mejor ambiente</span><div class="bt2"><div class="bf" style="width:55%;background:#8A8A87"></div></div><span class="bv">6</span></div>
+      <div class="bar"><span class="bl">Mejor dotación</span><div class="bt2"><div class="bf" style="width:45%;background:#B4B2A9"></div></div><span class="bv">5</span></div>
+    </div>
+  </div>
+
+  <!-- ── NUEVO: Experiencia del colaborador con tarjetas ── -->
+  <div class="full-box">
+    <div class="bt">Experiencia del colaborador — 31 renuncias voluntarias</div>
+    <div style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:12px;">Cada tarjeta muestra cuántas personas respondieron cada opción. La barra de color al pie indica la proporción visual.</div>
+
+    <div class="exp-grid">
+
+      <!-- Jefe/supervisor: Siempre 18, A veces 9, Nunca 4 = 31 -->
+      <div class="exp-card">
+        <div class="exp-dimension">👤 Respeto del jefe/supervisor</div>
+        <div class="exp-pill-row">
+          <div class="exp-pill pill-green">
+            <span class="exp-pill-label">Siempre</span>
+            <span class="exp-pill-num">18</span>
+          </div>
+          <div class="exp-pill pill-yellow">
+            <span class="exp-pill-label">A veces</span>
+            <span class="exp-pill-num">9</span>
+          </div>
+          <div class="exp-pill pill-red">
+            <span class="exp-pill-label">Nunca</span>
+            <span class="exp-pill-num">4</span>
+          </div>
+        </div>
+        <div class="exp-bar-mini">
+          <div style="flex:58;background:#639922;"></div>
+          <div style="flex:29;background:#FAC775;"></div>
+          <div style="flex:13;background:#E24B4A;"></div>
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--color-text-tertiary);">58% siempre · 29% a veces · 13% nunca</span>
+          <span class="exp-verdict verdict-crit">⚠ Crítico</span>
+        </div>
+      </div>
+
+      <!-- Compañeros: Siempre 25, A veces 5, Nunca 1 = 31 -->
+      <div class="exp-card">
+        <div class="exp-dimension">🤝 Respeto de compañeros</div>
+        <div class="exp-pill-row">
+          <div class="exp-pill pill-green">
+            <span class="exp-pill-label">Siempre</span>
+            <span class="exp-pill-num">25</span>
+          </div>
+          <div class="exp-pill pill-yellow">
+            <span class="exp-pill-label">A veces</span>
+            <span class="exp-pill-num">5</span>
+          </div>
+          <div class="exp-pill pill-red">
+            <span class="exp-pill-label">Nunca</span>
+            <span class="exp-pill-num">1</span>
+          </div>
+        </div>
+        <div class="exp-bar-mini">
+          <div style="flex:81;background:#639922;"></div>
+          <div style="flex:16;background:#FAC775;"></div>
+          <div style="flex:3;background:#E24B4A;"></div>
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--color-text-tertiary);">81% siempre · 16% a veces · 3% nunca</span>
+          <span class="exp-verdict verdict-ok">✓ Fortaleza</span>
+        </div>
+      </div>
+
+      <!-- Comunicación: Sí 16, Algunas veces 11, No 4 = 31 -->
+      <div class="exp-card">
+        <div class="exp-dimension">💬 Comunicación efectiva y clara</div>
+        <div class="exp-pill-row">
+          <div class="exp-pill pill-green">
+            <span class="exp-pill-label">Sí</span>
+            <span class="exp-pill-num">16</span>
+          </div>
+          <div class="exp-pill pill-yellow">
+            <span class="exp-pill-label">A veces</span>
+            <span class="exp-pill-num">11</span>
+          </div>
+          <div class="exp-pill pill-red">
+            <span class="exp-pill-label">No</span>
+            <span class="exp-pill-num">4</span>
+          </div>
+        </div>
+        <div class="exp-bar-mini">
+          <div style="flex:52;background:#639922;"></div>
+          <div style="flex:35;background:#FAC775;"></div>
+          <div style="flex:13;background:#E24B4A;"></div>
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--color-text-tertiary);">52% sí · 35% a veces · 13% no</span>
+          <span class="exp-verdict verdict-warn">↗ Mejorable</span>
+        </div>
+      </div>
+
+      <!-- Crecimiento: Sí 16, Algunas veces 3, No 11, NA 1 = 31 -->
+      <div class="exp-card">
+        <div class="exp-dimension">📈 Oportunidades de desarrollo</div>
+        <div class="exp-pill-row">
+          <div class="exp-pill pill-green">
+            <span class="exp-pill-label">Sí</span>
+            <span class="exp-pill-num">16</span>
+          </div>
+          <div class="exp-pill pill-yellow">
+            <span class="exp-pill-label">A veces</span>
+            <span class="exp-pill-num">3</span>
+          </div>
+          <div class="exp-pill pill-red">
+            <span class="exp-pill-label">No</span>
+            <span class="exp-pill-num">11</span>
+          </div>
+        </div>
+        <div class="exp-bar-mini">
+          <div style="flex:52;background:#639922;"></div>
+          <div style="flex:10;background:#FAC775;"></div>
+          <div style="flex:35;background:#E24B4A;"></div>
+          <div style="flex:3;background:#ccc;"></div>
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--color-text-tertiary);">52% sí · 10% a veces · 35% no · 3% n/a</span>
+          <span class="exp-verdict verdict-warn">↗ Mejorable</span>
+        </div>
+      </div>
+
+    </div><!-- /exp-grid -->
+
+    <!-- leyenda resumen -->
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+      <span style="color:#2D6611;font-weight:500;">✓ Fortaleza → más del 75% positivo</span>
+      <span style="color:#7A4A00;font-weight:500;">↗ Mejorable → entre 50–75% positivo</span>
+      <span style="color:#8C1F1E;font-weight:500;">⚠ Crítico → menos del 60% positivo con rojo &gt;10%</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <div class="bt">Por tipo de cargo</div>
+      <div class="bar"><span class="bl">Operativo</span><div class="bt2"><div class="bf" style="width:84%;background:var(--or)"></div></div><span class="bv">26</span></div>
+      <div class="bar"><span class="bl">Táctico</span><div class="bt2"><div class="bf" style="width:13%;background:#585856"></div></div><span class="bv">4</span></div>
+      <div class="bar"><span class="bl">Administrativo</span><div class="bt2"><div class="bf" style="width:3%;background:#B4B2A9"></div></div><span class="bv">1</span></div>
+      <div class="divider"></div>
+      <div class="bt" style="margin-bottom:9px;">Por país</div>
+      <div class="bar"><span class="bl">Colombia</span><div class="bt2"><div class="bf" style="width:65%;background:var(--or)"></div></div><span class="bv">20</span></div>
+      <div class="bar"><span class="bl">Perú</span><div class="bt2"><div class="bf" style="width:19%;background:#F7825F"></div></div><span class="bv">6</span></div>
+      <div class="bar"><span class="bl">México</span><div class="bt2"><div class="bf" style="width:6%;background:#8A8A87"></div></div><span class="bv">2</span></div>
+      <div class="bar"><span class="bl">Uruguay</span><div class="bt2"><div class="bf" style="width:6%;background:#B4B2A9"></div></div><span class="bv">2</span></div>
+      <div class="bar"><span class="bl">Costa Rica</span><div class="bt2"><div class="bf" style="width:3%;background:#FAC775"></div></div><span class="bv">1</span></div>
+    </div>
+    <div class="box">
+      <div class="bt">Cumplimiento operacional básico</div>
+      <div style="margin-bottom:14px;">
+        <div class="bar"><span class="bl" style="min-width:140px;">Boletas a tiempo</span><div class="bt2"><div class="bf" style="width:94%;background:#639922"></div></div><span class="bv">94%</span></div>
+        <div style="font-size:10px;color:var(--color-text-tertiary);margin-left:0;margin-top:-4px;margin-bottom:8px;">29 de 31 respondieron Sí</div>
+        <div class="bar"><span class="bl" style="min-width:140px;">Elementos de seguridad</span><div class="bt2"><div class="bf" style="width:81%;background:#FAC775"></div></div><span class="bv">81%</span></div>
+        <div style="font-size:10px;color:var(--color-text-tertiary);margin-left:0;margin-top:-4px;">25 de 31 respondieron Sí — 6 personas sin dotación</div>
+      </div>
+      <div class="divider"></div>
+      <div class="bt" style="margin-bottom:9px;">Sedes con más renuncias voluntarias</div>
+      <div class="bar"><span class="bl sede" style="min-width:140px;">Viajero Bogotá</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">4</span></div>
+      <div class="bar"><span class="bl sede" style="min-width:140px;">Viajero Guatapé</span><div class="bt2"><div class="bf" style="width:75%;background:var(--or)"></div></div><span class="bv">3</span></div>
+      <div class="bar"><span class="bl sede" style="min-width:140px;">Viajero Tayrona</span><div class="bt2"><div class="bf" style="width:75%;background:#585856"></div></div><span class="bv">3</span></div>
+      <div class="bar"><span class="bl sede" style="min-width:140px;">Viajero Cali</span><div class="bt2"><div class="bf" style="width:75%;background:#585856"></div></div><span class="bv">3</span></div>
+      <div class="bar"><span class="bl sede" style="min-width:140px;">Viajero Lima</span><div class="bt2"><div class="bf" style="width:75%;background:#8A8A87"></div></div><span class="bv">3</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SEGMENTO 2 ══════════════════ -->
+<div id="s2" class="seg">
+  <div class="seg-label">Segmento 2 · Insights estratégicos — basados en renuncias voluntarias</div>
+  <div class="ins"><div class="ins-tag">Insight #1 · Liderazgo como causa raíz</div><div class="ins-txt">El liderazgo es el factor #1 de renuncia voluntaria: 8 personas lo señalan como causa directa y 11 como el principal cambio que las habría retenido. Esto no es un problema de cultura organizacional generalizado —es un problema de selección, formación y accountability de líderes operativos en sedes específicas.</div><div class="ins-imp">Impacto: Guatapé y Cali concentran el patrón más crítico, con líderes cuya gestión genera desintegración activa de equipos.</div></div>
+  <div class="ins"><div class="ins-tag">Insight #2 · Rotación temprana prevenible</div><div class="ins-txt">El 35% de quienes renunciaron voluntariamente (11 personas) lo hizo antes de los 90 días. Esto señala fallas concretas en tres momentos: propuesta de valor comunicada en selección, calidad del onboarding, y acompañamiento del líder en las primeras semanas. Son salidas que ocurren antes de que el colaborador pueda enamorarse de la marca.</div><div class="ins-imp">Impacto: Costo de reemplazo 1.5–2x el salario mensual por cada salida temprana. Con 11 casos en Q1, el costo oculto es significativo.</div></div>
+  <div class="ins"><div class="ins-tag">Insight #3 · Compensación: problema de cumplimiento, no de nivel</div><div class="ins-txt">6 colaboradores marcaron compensación como motivo de salida, pero los testimonios abiertos revelan que el problema rara vez es que el salario sea bajo —es que lo que se paga no coincide con lo que se prometió. Propinas no declaradas, dominicales no pagados y recargos nocturnos incorrectos erosionan la confianza desde el primer mes.</div><div class="ins-imp">Impacto: Un primer pago incorrecto tiene efecto multiplicador: genera desconfianza que ya no se recupera, aunque se corrija después.</div></div>
+  <div class="ins"><div class="ins-tag">Insight #4 · Fortaleza real de la marca empleadora</div><div class="ins-txt">El 87% de quienes renunciaron voluntariamente recomendaría trabajar en Viajero, y el 87% califica su experiencia como Buena o Excelente. Múltiples testimonios expresan gratitud, afecto por la marca y deseos de volver. Esto confirma que el problema no es la empresa: son focos operativos localizados que dañan una reputación que en general es muy sólida.</div><div class="ins-imp">Oportunidad: La base de employer branding es robusta. Eliminar los focos tóxicos libera ese potencial de atracción de talento.</div></div>
+  <div class="ins"><div class="ins-tag">Insight #5 · Talento táctico en riesgo</div><div class="ins-txt">4 renuncias voluntarias en nivel táctico (Coordinadora de Marca con 1.393 días, Líderes de área). Estos perfiles concentran conocimiento institucional y toman 6–12 meses en alcanzar plena productividad en reemplazo. Sus relatos describen cargas desproporcionadas al ascender, falta de alineación directiva y ausencia de reconocimiento real.</div><div class="ins-imp">Riesgo: La pérdida de talento táctico tiene un costo 3–5x superior al de roles operativos, por tiempo de reemplazo y pérdida de conocimiento acumulado.</div></div>
+  <div class="ins"><div class="ins-tag">Insight #6 · La cultura de pares funciona; el liderazgo vertical, no</div><div class="ins-txt">El 81% se sintió siempre respetado por sus compañeros, versus solo el 58% que sintió lo mismo de su jefe. La cultura horizontal (entre pares) es genuinamente positiva. El problema es estrictamente vertical, lo que significa que intervenir en líderes específicos puede cambiar la experiencia sin necesidad de transformaciones culturales profundas.</div><div class="ins-imp">Implicación: Soluciones de corto plazo sobre liderazgo tienen alto ROI, dado que la cultura base ya es favorable.</div></div>
+</div>
+
+<!-- ══════════════════ SEGMENTO 3 ══════════════════ -->
+<div id="s3" class="seg">
+  <div class="seg-label">Segmento 3 · Rotación general Q1 2026 — fuente: Dashboard BI Rotación</div>
+
+  <div class="krow">
+    <div class="kc"><div class="kl">Activos durante Q1</div><div class="kv">686</div><div class="ks">headcount promedio Q1</div></div>
+    <div class="kc"><div class="kl">Tasa de rotación Q1</div><div class="kv hi">15.59%</div><div class="ks">dato oficial del BI</div></div>
+    <div class="kc"><div class="kl">Empleados que dejaron</div><div class="kv hi">107</div><div class="ks">según KPI del BI</div></div>
+    <div class="kc"><div class="kl">Total salidas registradas</div><div class="kv">153</div><div class="ks">incluye aprendizaje y SENA</div></div>
+    <div class="kc"><div class="kl">Ingresos Q1</div><div class="kv">150</div><div class="ks">nuevos colaboradores</div></div>
+    <div class="kc"><div class="kl">Balance neto Q1</div><div class="kv hi">-3</div><div class="ks">salidas vs ingresos</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <div class="bt">Tasa de rotación Q1 por país — BI</div>
+      <div class="bar"><span class="bl">Colombia</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">8.68%</span></div>
+      <div class="bar"><span class="bl">Perú</span><div class="bt2"><div class="bf" style="width:33%;background:#585856"></div></div><span class="bv">2.87%</span></div>
+      <div class="bar"><span class="bl">México</span><div class="bt2"><div class="bf" style="width:21%;background:#F7825F"></div></div><span class="bv">1.83%</span></div>
+      <div class="bar"><span class="bl">Argentina</span><div class="bt2"><div class="bf" style="width:9%;background:#8A8A87"></div></div><span class="bv">0.77%</span></div>
+      <div class="bar"><span class="bl">Costa Rica</span><div class="bt2"><div class="bf" style="width:7%;background:#B4B2A9"></div></div><span class="bv">0.61%</span></div>
+      <div class="bar"><span class="bl">Panamá</span><div class="bt2"><div class="bf" style="width:7%;background:#B4B2A9"></div></div><span class="bv">0.61%</span></div>
+      <div class="bar"><span class="bl">Uruguay</span><div class="bt2"><div class="bf" style="width:7%;background:#FAC775"></div></div><span class="bv">0.61%</span></div>
+      <div class="bar"><span class="bl">Ecuador</span><div class="bt2"><div class="bf" style="width:2%;background:#D3D1C7"></div></div><span class="bv">0.15%</span></div>
+    </div>
+    <div class="box">
+      <div class="bt">Salidas Q1 por tipo de razón</div>
+      <div class="bar"><span class="bl">Renuncia voluntaria</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">82</span></div>
+      <div class="bar"><span class="bl">Term. sin causa justa</span><div class="bt2"><div class="bf" style="width:32%;background:#585856"></div></div><span class="bv">26</span></div>
+      <div class="bar"><span class="bl">Term. periodo prueba</span><div class="bt2"><div class="bf" style="width:18%;background:#FAC775"></div></div><span class="bv">15</span></div>
+      <div class="bar"><span class="bl">Vencimiento contrato</span><div class="bt2"><div class="bf" style="width:15%;background:#F7825F"></div></div><span class="bv">12</span></div>
+      <div class="bar"><span class="bl">Term. aprendizaje</span><div class="bt2"><div class="bf" style="width:9%;background:#8A8A87"></div></div><span class="bv">7</span></div>
+      <div class="bar"><span class="bl">Mutuo acuerdo</span><div class="bt2"><div class="bf" style="width:7%;background:#B4B2A9"></div></div><span class="bv">6</span></div>
+      <div class="bar"><span class="bl">Causa justa / Abandono</span><div class="bt2"><div class="bf" style="width:6%;background:#D3D1C7"></div></div><span class="bv">5</span></div>
+    </div>
+  </div>
+
+  <!-- Tabla de sedes con tasa de rotación del BI -->
+  <div class="full-box">
+    <div class="bt">Tasa de rotación Q1 por sede — datos del BI · Informe de Rotación por Sede</div>
+    <div style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:10px;">Ordenadas de mayor a menor tasa. Umbral de alerta: &gt;25%</div>
+    <table class="sede-tbl">
+      <thead><tr><th>Sede</th><th>Tasa rotación</th><th>Barra</th><th>Alerta</th></tr></thead>
+      <tbody>
+        <tr><td>Viajero Montevideo</td><td style="font-weight:500;color:var(--or)">33.33%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:100%"></div></div></td><td><span class="badge-hi">Alta</span></td></tr>
+        <tr><td>Viajero San Andrés</td><td style="font-weight:500;color:var(--or)">31.58%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:95%"></div></div></td><td><span class="badge-hi">Alta</span></td></tr>
+        <tr><td>Viajero Bacalar</td><td style="font-weight:500;">27.03%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:81%"></div></div></td><td><span class="badge-hi">Alta</span></td></tr>
+        <tr><td>Viajero Bogotá</td><td style="font-weight:500;">25.93%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:78%"></div></div></td><td><span class="badge-hi">Alta</span></td></tr>
+        <tr><td>Viajero Salento</td><td style="font-weight:500;">25.64%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:77%"></div></div></td><td><span class="badge-hi">Alta</span></td></tr>
+        <tr><td>Viajero Guatapé</td><td style="font-weight:500;">24.49%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:73%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero CDMX</td><td style="font-weight:500;">24.39%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:73%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Cartagena C.</td><td style="font-weight:500;">22.22%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:67%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Casco Viejo</td><td style="font-weight:500;">21.05%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:63%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Medellín</td><td style="font-weight:500;">20.59%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:62%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Cartagena G.</td><td style="font-weight:500;">20.00%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:60%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Tayrona</td><td style="font-weight:500;">19.13%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:57%"></div></div></td><td><span class="badge-md">Media</span></td></tr>
+        <tr><td>Viajero Cusco</td><td style="font-weight:500;">15.58%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:47%"></div></div></td><td><span class="badge-ok">Normal</span></td></tr>
+        <tr><td>Viajero Lima</td><td style="font-weight:500;">15.15%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:45%"></div></div></td><td><span class="badge-ok">Normal</span></td></tr>
+        <tr><td>Viajero Cali</td><td style="font-weight:500;">14.63%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:44%"></div></div></td><td><span class="badge-ok">Normal</span></td></tr>
+        <tr><td>Viajero Puerto Esc.</td><td style="font-weight:500;">14.29%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:43%"></div></div></td><td><span class="badge-ok">Normal</span></td></tr>
+        <tr><td>Viajero Colonia H.</td><td style="font-weight:500;">13.33%</td><td><div class="tbl-bar-wrap"><div class="tbl-bar-fill" style="width:40%"></div></div></td><td><span class="badge-ok">Normal</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="box">
+      <div class="bt">Top roles con mayor rotación — BI</div>
+      <div class="bar"><span class="bl">Personal de limpieza</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">2.59%</span></div>
+      <div class="bar"><span class="bl">Recepcionista</span><div class="bt2"><div class="bf" style="width:94%;background:#585856"></div></div><span class="bv">2.43%</span></div>
+      <div class="bar"><span class="bl">Bartender</span><div class="bt2"><div class="bf" style="width:53%;background:#FAC775"></div></div><span class="bv">1.38%</span></div>
+      <div class="bar"><span class="bl">Auxiliar de cocina</span><div class="bt2"><div class="bf" style="width:47%;background:#FAC775"></div></div><span class="bv">1.22%</span></div>
+      <div class="bar"><span class="bl">Mesero/a</span><div class="bt2"><div class="bf" style="width:36%;background:#B4B2A9"></div></div><span class="bv">0.92%</span></div>
+      <div class="bar"><span class="bl">Auditor/a nocturno</span><div class="bt2"><div class="bf" style="width:30%;background:#B4B2A9"></div></div><span class="bv">0.77%</span></div>
+      <div class="bar"><span class="bl">Líder de experiencia</span><div class="bt2"><div class="bf" style="width:30%;background:#B4B2A9"></div></div><span class="bv">0.77%</span></div>
+    </div>
+    <div class="box">
+      <div class="bt">Salidas Q1 por mes</div>
+      <div class="bar"><span class="bl">Enero</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">48</span></div>
+      <div class="bar"><span class="bl">Febrero</span><div class="bt2"><div class="bf" style="width:77%;background:#585856"></div></div><span class="bv">37</span></div>
+      <div class="bar"><span class="bl">Marzo</span><div class="bt2"><div class="bf" style="width:94%;background:#585856"></div></div><span class="bv">45</span></div>
+      <div class="bar"><span class="bl">Abril</span><div class="bt2"><div class="bf" style="width:48%;background:#B4B2A9"></div></div><span class="bv">23</span></div>
+      <div class="divider"></div>
+      <div class="bt" style="margin-bottom:8px;">Permanencia — leavers Q1</div>
+      <div class="bar"><span class="bl">Menos de 90 días</span><div class="bt2"><div class="bf" style="width:100%;background:var(--or)"></div></div><span class="bv">35%</span></div>
+      <div class="bar"><span class="bl">90–365 días</span><div class="bt2"><div class="bf" style="width:60%;background:#FAC775"></div></div><span class="bv">21%</span></div>
+      <div class="bar"><span class="bl">Más de 1 año</span><div class="bt2"><div class="bf" style="width:80%;background:#639922"></div></div><span class="bv">44%</span></div>
+      <div style="display:flex;gap:16px;margin-top:10px;">
+        <div><div style="font-size:10px;color:var(--color-text-secondary);">Media</div><div style="font-size:16px;font-weight:500;">354 días</div></div>
+        <div><div style="font-size:10px;color:var(--color-text-secondary);">Mediana</div><div style="font-size:16px;font-weight:500;">183 días</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <div class="alert-t">Sedes críticas Q1 — tasa &gt;25% según BI</div>
+    <div class="alert-b">Viajero Montevideo (33.33%), San Andrés (31.58%) y Bacalar (27.03%) superan la zona de alerta alta. Bogotá (25.93%) y Salento (25.64%) están en el límite.</div>
+  </div>
+</div>
+
+<!-- ══════════════════ SEGMENTO 4 ══════════════════ -->
+<div id="s4" class="seg">
+  <div class="seg-label">Segmento 4 · Recomendaciones — basadas en insights de renuncias voluntarias</div>
+  <div class="full-box" style="margin-bottom:12px;">
+    <div class="bt">Acción inmediata — esta semana</div>
+    <div style="height:6px;"></div>
+    <div class="rec-item"><span class="rbadge ru">Urgente</span><div class="rt">Auditar nómina en Viajero Santa Marta: verificar pago de dominicales, recargos nocturnos y propinas. Si hay incumplimiento, regularizar antes de que escale a demanda laboral.</div></div>
+    <div class="rec-item"><span class="rbadge ru">Urgente</span><div class="rt">Tomar una decisión deliberada sobre el gerente Jonathan Ramírez (Guatapé): existen evidencias documentadas (informe RRHH diciembre, múltiples testimonios). Mantenerlo es una decisión activa de sostener el riesgo de clima y rotación en esa sede.</div></div>
+    <div class="rec-item"><span class="rbadge ru">Urgente</span><div class="rt">Lanzar encuesta de pulso de 5 preguntas en Guatapé, Cali y Medellín para medir temperatura actual. Si los problemas persisten, hay más personas por salir en Q2.</div></div>
+  </div>
+  <div class="full-box" style="margin-bottom:12px;">
+    <div class="bt">Mediano plazo — próximos 1 a 3 meses</div>
+    <div style="height:6px;"></div>
+    <div class="rec-item"><span class="rbadge rm">Mediano</span><div class="rt">Diseñar evaluación de líderes operativos con feedback 360 y NPS interno por sede. Los líderes deben saber que su gestión tiene consecuencias medibles en su continuidad. Sin accountability, el patrón se repite.</div></div>
+    <div class="rec-item"><span class="rbadge rm">Mediano</span><div class="rt">Crear protocolo estructurado de onboarding para los primeros 90 días: inducción clara, check-in al mes 1, retroalimentación al mes 2. El 35% de las renuncias voluntarias ocurre antes de los 3 meses y es prevenible.</div></div>
+    <div class="rec-item"><span class="rbadge rm">Mediano</span><div class="rt">Estandarizar transparencia de compensación desde selección: comunicar con claridad cómo se calculan propinas, recargos y beneficios antes de la firma del contrato, y validar que el primer pago refleje exactamente lo prometido.</div></div>
+    <div class="rec-item"><span class="rbadge rm">Mediano</span><div class="rt">Revisitar las cargas y compensaciones del nivel táctico al ascender: las renuncias de Coordinadora de Marca y Líderes de área describen aumento de responsabilidades sin ajuste de remuneración ni recursos.</div></div>
+  </div>
+  <div class="full-box" style="margin-bottom:12px;">
+    <div class="bt">Largo plazo — 3 a 12 meses</div>
+    <div style="height:6px;"></div>
+    <div class="rec-item"><span class="rbadge rl">Largo</span><div class="rt">Desarrollar rutas de carrera claras para roles operativos → táctico: el 35% que señala falta de crecimiento como factor de retención es talento que puede desarrollarse internamente si ve un camino visible.</div></div>
+    <div class="rec-item"><span class="rbadge rl">Largo</span><div class="rt">Sistematizar People Analytics: construir dashboard de rotación en tiempo real con alertas automáticas cuando una sede supera umbrales de salida o cuando el NPS interno cae. Los datos ya existen; falta el sistema que los convierta en señal temprana.</div></div>
+    <div class="rec-item"><span class="rbadge rl">Largo</span><div class="rt">Capitalizar la marca empleadora: el 87% de renunciantes voluntarios recomendaría trabajar en Viajero. Programas de embajadores y testimonios reales pueden mejorar la calidad del talento que ingresa.</div></div>
+    <div class="rec-item"><span class="rbadge rl">Largo</span><div class="rt">Diseñar un modelo de liderazgo para sedes de hospitalidad: competencias definidas, proceso de selección de gerentes de sede más riguroso, y programa de desarrollo continuo.</div></div>
+  </div>
+  <button class="cta" onclick="sendPrompt('Con base en el análisis de Viajero Hostels Q1 2026, ¿puedes elaborar un plan de acción para las 4 acciones urgentes, con responsables sugeridos, KPIs de éxito y plazos de ejecución?')">Generar plan de acción detallado con KPIs y responsables ↗</button>
+</div>
+
+<script>
+function go(id,btn){
+  document.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.snav').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+}
+</script>
